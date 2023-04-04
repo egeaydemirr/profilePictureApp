@@ -1,5 +1,7 @@
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import React from 'react';
+import {useActionSheet} from '@expo/react-native-action-sheet';
+import {openActionSheet} from '../components/ActionSheet';
 
 //TODO: Add a touchable opacity for a image
 //TODO: onPress. actionSheet will open and 4 options will be displayed
@@ -9,9 +11,15 @@ import React from 'react';
 // TODO: 4. Cancel
 
 const Home = () => {
+  const {showActionSheetWithOptions} = useActionSheet();
+
+  const handleOpenActionSheet = () => {
+    openActionSheet(showActionSheetWithOptions);
+  };
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handleOpenActionSheet}>
         <View style={styles.imageContainer}>
           <Image source={require('../assets/gallery.jpg')} />
         </View>
