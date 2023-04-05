@@ -1,14 +1,9 @@
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import React from 'react';
 import {useActionSheet} from '@expo/react-native-action-sheet';
 import {openActionSheet} from '../components/ActionSheet';
 
-//TODO: Add a touchable opacity for a image
-//TODO: onPress. actionSheet will open and 4 options will be displayed
-// TODO: 1. Camera
-// TODO: 2. Gallery
-// TODO: 3. Folder
-// TODO: 4. Cancel
+//TODO: Implement the image picker for the camera and gallery
 
 const Home = () => {
   const {showActionSheetWithOptions} = useActionSheet();
@@ -16,6 +11,14 @@ const Home = () => {
   const handleOpenActionSheet = () => {
     openActionSheet(showActionSheetWithOptions);
   };
+
+  // const openCamera = async () => {
+  //   const options = {
+  //     cameraType: 'front',
+  //     saveToPhotos: true,
+  //   };
+  //   const response = await launchCamera(options);
+  // };
 
   return (
     <View style={styles.container}>
