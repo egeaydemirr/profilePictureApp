@@ -1,5 +1,6 @@
 import openCamera from './OpenCamera';
 import openGallery from './OpenGallery';
+import selectDocument from './DocumentPicker';
 
 export const openActionSheet = showActionSheetWithOptions => {
   const options = ['Camera', 'Gallery', 'Folder', 'Cancel'];
@@ -24,7 +25,7 @@ export const openActionSheet = showActionSheetWithOptions => {
     buttonIndex => {
       buttonIndex === 0 && openCamera();
       buttonIndex === 1 && openGallery();
-      buttonIndex === 2 && console.log('Folder');
+      buttonIndex === 2 && selectDocument();
       buttonIndex === 3 && console.log('Cancel');
 
       // Do something here depending on the button index selected
