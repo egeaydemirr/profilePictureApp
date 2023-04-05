@@ -10,9 +10,11 @@ import {
   selectDocument,
 } from '../components/ImagePicker';
 
-const Home = ({navigation}) => {
+const Home = ({route, navigation}) => {
   const {showActionSheetWithOptions} = useActionSheet();
+  const [imageData, setImageData] = React.useState(null);
 
+  //* Action Sheet ----------------
   const openActionSheet = () => {
     const options = ['Camera', 'Gallery', 'Folder', 'Cancel'];
     const cancelButtonIndex = 3;
@@ -39,7 +41,10 @@ const Home = ({navigation}) => {
         buttonIndex === 2 && selectDocument();
       },
     );
-    const openCamera = async navigation => {
+
+    //* Open Camera ----------------
+
+    const openCamera = async () => {
       const options = {
         cameraType: 'front',
         saveToPhotos: true,
@@ -55,14 +60,21 @@ const Home = ({navigation}) => {
         console.log('Image picker error: ', response.errorMessage);
       } else {
         cameraImageData = response.assets[0];
+        console.log('camera Image Data:', cameraImageData);
+        setImageData(cameraImageData.uri);
       }
+      console.log('Image:', imageData);
     };
+
+    //* Open Gallery ----------------
     const openGallery = async () => {
       const options = {
         saveToPhotos: true,
       };
       const response = await launchImageLibrary(options);
     };
+
+    //* Select Document ----------------
     const selectDocument = async () => {
       try {
         const doc = await DocumentPicker.pick({
