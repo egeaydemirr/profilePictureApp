@@ -1,28 +1,86 @@
 import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import React from 'react';
 import {useActionSheet} from '@expo/react-native-action-sheet';
-import {openActionSheet} from '../components/ActionSheet';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import DocumentPicker from 'react-native-document-picker';
 
-//TODO: Implement the image picker for the camera and gallery
+import {
+  openCamera,
+  openGallery,
+  selectDocument,
+} from '../components/ImagePicker';
 
-const Home = () => {
+const Home = ({navigation}) => {
   const {showActionSheetWithOptions} = useActionSheet();
 
-  const handleOpenActionSheet = () => {
-    openActionSheet(showActionSheetWithOptions);
-  };
+  const openActionSheet = () => {
+    const options = ['Camera', 'Gallery', 'Folder', 'Cancel'];
+    const cancelButtonIndex = 3;
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+        cancelButtonTintColor: 'red',
+        showSeparators: true,
+        textStyle: {
+          marginLeft: -20,
+        },
+        icons: [
+          require('../assets/camera.png'),
+          require('../assets/photo-gallery.png'),
+          require('../assets/folder.png'),
+          require('../assets/cancel.png'),
+        ],
+        title: 'Select an option',
+      },
+      buttonIndex => {
+        buttonIndex === 0 && openCamera();
+        buttonIndex === 1 && openGallery();
+        buttonIndex === 2 && selectDocument();
+      },
+    );
+    const openCamera = async navigation => {
+      const options = {
+        cameraType: 'front',
+        saveToPhotos: true,
+      };
 
-  // const openCamera = async () => {
-  //   const options = {
-  //     cameraType: 'front',
-  //     saveToPhotos: true,
-  //   };
-  //   const response = await launchCamera(options);
-  // };
+      const response = await launchCamera(options);
+
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.log('Image picker error: ', response.errorCode);
+      } else if (response.errorMessage) {
+        console.log('Image picker error: ', response.errorMessage);
+      } else {
+        cameraImageData = response.assets[0];
+      }
+    };
+    const openGallery = async () => {
+      const options = {
+        saveToPhotos: true,
+      };
+      const response = await launchImageLibrary(options);
+    };
+    const selectDocument = async () => {
+      try {
+        const doc = await DocumentPicker.pick({
+          type: [DocumentPicker.types.images],
+        });
+      } catch (error) {
+        if (DocumentPicker.isCancel(error)) {
+          console.log('User cancelled the picker');
+        } else {
+          throw error;
+        }
+      }
+    };
+  };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={handleOpenActionSheet}>
+      <TouchableOpacity onPress={openActionSheet}>
         <View style={styles.imageContainer}>
           <Image source={require('../assets/gallery.jpg')} />
         </View>
