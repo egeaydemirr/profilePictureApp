@@ -1,65 +1,34 @@
 import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import React from 'react';
 import {useActionSheet} from '@expo/react-native-action-sheet';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import DocumentPicker from 'react-native-document-picker';
-
 import {
   openCamera,
   openGallery,
   selectDocument,
 } from '../components/ImagePicker';
 
-const Home = ({route, navigation}) => {
+const Home = () => {
   const {showActionSheetWithOptions} = useActionSheet();
   const [imageData, setImageData] = React.useState(null);
-  let source = null;
+
   let photo = null;
-
-  const openCamera = async () => {
-    const options = {
-      cameraType: 'front',
-      saveToPhotos: true,
-    };
-
-    const response = await launchCamera(options);
-
-    if (response.didCancel) {
-      console.log('User cancelled image picker');
-    } else if (response.errorCode) {
-      console.log('Image picker error: ', response.errorCode);
-    } else if (response.errorMessage) {
-      console.log('Image picker error: ', response.errorMessage);
-    } else {
-      source = response.assets[0];
-    }
-    return source;
-  };
-  const selectDocument = async () => {
-    try {
-      const doc = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images],
-      });
-    } catch (error) {
-      if (DocumentPicker.isCancel(error)) {
-        console.log('User cancelled the picker');
-      } else {
-        throw error;
-      }
-    }
-  };
-  const openGallery = async () => {
-    const options = {
-      saveToPhotos: true,
-    };
-    const response = await launchImageLibrary(options);
-  };
 
   const camera = async () => {
     photo = await openCamera();
     setImageData(photo);
     console.log('photo', photo);
   };
+  const gallery = async () => {
+    photo = await openGallery();
+    setImageData(photo);
+    console.log('photo', photo);
+  };
+  const document = async () => {
+    photo = await selectDocument();
+    setImageData(photo);
+    console.log('photo', photo);
+  };
+
   //* Action Sheet ----------------
   const openActionSheet = () => {
     const options = ['Camera', 'Gallery', 'Folder', 'Cancel'];
@@ -83,8 +52,8 @@ const Home = ({route, navigation}) => {
       },
       buttonIndex => {
         buttonIndex === 0 && camera();
-        buttonIndex === 1 && openGallery();
-        buttonIndex === 2 && selectDocument();
+        buttonIndex === 1 && gallery();
+        buttonIndex === 2 && document();
       },
     );
   };
@@ -117,14 +86,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
-    borderWidth: 1,
-    elevation: 2,
+    borderWidth: 5,
     marginBottom: 200,
   },
   image: {
     width: 300,
     height: 300,
     borderRadius: 10,
+    borderWidth: 5,
+    borderColor: '#000',
   },
 });
 
