@@ -13,7 +13,53 @@ import {
 const Home = ({route, navigation}) => {
   const {showActionSheetWithOptions} = useActionSheet();
   const [imageData, setImageData] = React.useState(null);
+  let source = null;
+  let photo = null;
 
+  const openCamera = async () => {
+    const options = {
+      cameraType: 'front',
+      saveToPhotos: true,
+    };
+
+    const response = await launchCamera(options);
+
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.errorCode) {
+      console.log('Image picker error: ', response.errorCode);
+    } else if (response.errorMessage) {
+      console.log('Image picker error: ', response.errorMessage);
+    } else {
+      source = response.assets[0];
+    }
+    return source;
+  };
+  const selectDocument = async () => {
+    try {
+      const doc = await DocumentPicker.pick({
+        type: [DocumentPicker.types.images],
+      });
+    } catch (error) {
+      if (DocumentPicker.isCancel(error)) {
+        console.log('User cancelled the picker');
+      } else {
+        throw error;
+      }
+    }
+  };
+  const openGallery = async () => {
+    const options = {
+      saveToPhotos: true,
+    };
+    const response = await launchImageLibrary(options);
+  };
+
+  const camera = async () => {
+    photo = await openCamera();
+    setImageData(photo);
+    console.log('photo', photo);
+  };
   //* Action Sheet ----------------
   const openActionSheet = () => {
     const options = ['Camera', 'Gallery', 'Folder', 'Cancel'];
@@ -36,65 +82,22 @@ const Home = ({route, navigation}) => {
         title: 'Select an option',
       },
       buttonIndex => {
-        buttonIndex === 0 && openCamera();
+        buttonIndex === 0 && camera();
         buttonIndex === 1 && openGallery();
         buttonIndex === 2 && selectDocument();
       },
     );
-
-    //* Open Camera ----------------
-
-    const openCamera = async () => {
-      const options = {
-        cameraType: 'front',
-        saveToPhotos: true,
-      };
-
-      const response = await launchCamera(options);
-
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        console.log('Image picker error: ', response.errorCode);
-      } else if (response.errorMessage) {
-        console.log('Image picker error: ', response.errorMessage);
-      } else {
-        cameraImageData = response.assets[0];
-        console.log('camera Image Data:', cameraImageData);
-        setImageData(cameraImageData.uri);
-      }
-      console.log('Image:', imageData);
-    };
-
-    //* Open Gallery ----------------
-    const openGallery = async () => {
-      const options = {
-        saveToPhotos: true,
-      };
-      const response = await launchImageLibrary(options);
-    };
-
-    //* Select Document ----------------
-    const selectDocument = async () => {
-      try {
-        const doc = await DocumentPicker.pick({
-          type: [DocumentPicker.types.images],
-        });
-      } catch (error) {
-        if (DocumentPicker.isCancel(error)) {
-          console.log('User cancelled the picker');
-        } else {
-          throw error;
-        }
-      }
-    };
   };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={openActionSheet}>
         <View style={styles.imageContainer}>
-          <Image source={require('../assets/gallery.jpg')} />
+          {imageData ? (
+            <Image source={{uri: imageData.uri}} style={styles.image} />
+          ) : (
+            <Image source={require('../assets/gallery.jpg')} />
+          )}
         </View>
       </TouchableOpacity>
     </View>
@@ -117,6 +120,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     elevation: 2,
     marginBottom: 200,
+  },
+  image: {
+    width: 300,
+    height: 300,
+    borderRadius: 10,
   },
 });
 
