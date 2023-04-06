@@ -6,30 +6,37 @@ import {
   openGallery,
   selectDocument,
 } from '../components/ImagePicker';
+import faceDetector from '../components/FaceDetection';
 
 const Home = () => {
   const {showActionSheetWithOptions} = useActionSheet();
   const [imageData, setImageData] = React.useState(null);
+  const [resultFace, setResultFace] = React.useState(null);
 
   let photo = null;
 
   const camera = async () => {
     photo = await openCamera();
-    setImageData(photo);
-    console.log('photo', photo);
+    if (photo !== null) {
+      setImageData(photo);
+      result = await faceDetector(photo.uri);
+      setResultFace(result);
+    }
   };
   const gallery = async () => {
     photo = await openGallery();
-    setImageData(photo);
-    console.log('photo', photo);
+    if (photo !== null) {
+      setImageData(photo);
+      result = await faceDetector(photo.uri);
+      setResultFace(result);
+    }
   };
+  console.log('resultFace', resultFace);
   const document = async () => {
     photo = await selectDocument();
     setImageData(photo);
-    console.log('photo', photo);
   };
 
-  //* Action Sheet ----------------
   const openActionSheet = () => {
     const options = ['Camera', 'Gallery', 'Folder', 'Cancel'];
     const cancelButtonIndex = 3;

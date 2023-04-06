@@ -1,6 +1,8 @@
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import DocumentPicker from 'react-native-document-picker';
+import FaceDetection from '@react-native-ml-kit/face-detection';
 
+//TODO: Implement the face detection
 export const openCamera = async () => {
   const options = {
     cameraType: 'front',
@@ -40,6 +42,6 @@ export const selectDocument = async () => {
   const doc = await DocumentPicker.pick({
     type: [DocumentPicker.types.images],
   });
-  console.log(doc);
+
   return doc[0].name;
 };
