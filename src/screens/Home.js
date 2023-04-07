@@ -7,6 +7,7 @@ import {
   selectDocument,
 } from '../components/ImagePicker';
 import faceDetector from '../components/FaceDetection';
+import croppedFace from '../components/cropFaceArea';
 
 const Home = () => {
   const {showActionSheetWithOptions} = useActionSheet();
@@ -31,7 +32,7 @@ const Home = () => {
       setResultFace(result);
     }
   };
-  console.log('resultFace', resultFace);
+
   const document = async () => {
     photo = await selectDocument();
     setImageData(photo);
@@ -64,6 +65,13 @@ const Home = () => {
       },
     );
   };
+  // console.log('resultFace:', resultFace);
+  // console.log('imageData:', imageData);
+
+  const crooped =
+    imageData && resultFace ? croppedFace(imageData, resultFace) : null;
+
+  // console.log(crooped);
 
   return (
     <View style={styles.container}>
